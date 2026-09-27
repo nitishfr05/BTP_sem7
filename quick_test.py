@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 
 # Add project root to sys.path
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 from src.copilot.pipeline import NetworkCopilot
 from src.copilot.log_parsers import parse_zeek_json_line
@@ -50,12 +52,12 @@ def run_quick_test():
     print(f"      Details: {test_record.summary_text}")
 
     copilot = NetworkCopilot(
-        model_name="llama-3.1-8b-instant",
+        model_name=os.getenv("COPILOT_DEFAULT_MODEL", "openai/gpt-oss-20b"),
         api_key=api_key,
         defences=[]
     )
 
-    print("\n      Sending prompt to Groq (model: llama-3.1-8b-instant)...")
+    print(f"\n      Sending prompt to Groq (model: {copilot.model_name})...")
     try:
         result = copilot.classify_log(test_record)
         print("\n[3/3] Copilot Response Received Successfully!")

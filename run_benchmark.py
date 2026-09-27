@@ -6,6 +6,8 @@ import sys
 from dotenv import load_dotenv
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 from src.copilot.pipeline import NetworkCopilot
 from src.attacks.payload_bank import get_curated_payload_bank
@@ -18,14 +20,18 @@ from data.sample_logs.loader import load_sample_dataset
 def main():
     load_dotenv()
     parser = argparse.ArgumentParser(description="Evaluate Prompt Injection & Defences on Network Copilots")
-    parser.add_argument("--model", type=str, default="llama-3.1-8b-instant",
-                        help="Model to test (e.g. llama-3.1-8b-instant, mixtral-8x7b-32768, gemma2-9b-it)")
+    parser.add_argument("--model", type=str, default="openai/gpt-oss-20b",
+                        help="Model to test (e.g. openai/gpt-oss-20b, qwen/qwen3.8-27b, openai/gpt-oss-120b)")
     parser.add_argument("--defences", type=str, default="none",
                         help="Comma-separated defences: none, boundary_awareness, spotlighting, classifier_filter, all")
     parser.add_argument("--channels", type=str, default="all",
                         help="Comma-separated channels: all, raw_log, user_agent, dns_query, alert_msg, alert_desc")
     parser.add_argument("--quick", action="store_true",
                         help="Run quick subset of payloads (1 per category) for smoke testing")
+    parser.add_argument("--max-records", type=int, default=None,
+                        help="Limit number of malicious records to test (e.g. --max-records 2)")
+    parser.add_argument("--delay", type=float, default=0.5,
+                        help="Delay in seconds between API requests (default: 0.5)")
     parser.add_argument("--utility-only", action="store_true",
                         help="Only evaluate false suppression rate (FSR) on benign logs")
 
@@ -53,6 +59,9 @@ def main():
 
     # Load data
     benign_logs, malicious_logs = load_sample_dataset("data/sample_logs")
+    if args.max_records and args.max_records > 0:
+        malicious_logs = malicious_logs[:args.max_records]
+        benign_logs = benign_logs[:args.max_records]
     print(f"[*] Loaded dataset: {len(benign_logs)} benign, {len(malicious_logs)} malicious records.")
 
     # Load payloads
@@ -75,7 +84,7 @@ def main():
         model_name=args.model,
         api_key=api_key,
         defences=active_defences,
-        delay_seconds=1.5  # Respect Groq rate limits
+        delay_seconds=args.delay
     )
 
     runner = BenchmarkRunner(output_dir="results")

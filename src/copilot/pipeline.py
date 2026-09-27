@@ -24,7 +24,7 @@ class NetworkCopilot:
 
     def __init__(
         self,
-        model_name: str = "llama-3.1-8b-instant",
+        model_name: str = "openai/gpt-oss-20b",
         provider: str = "groq",
         api_key: Optional[str] = None,
         temperature: float = 0.0,

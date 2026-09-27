@@ -77,7 +77,9 @@ class BenchmarkRunner:
                 time.sleep(2)
 
         df = pd.DataFrame(results)
-        csv_path = os.path.join(self.tables_dir, f"{experiment_name}_{copilot.model_name}_{int(time.time())}.csv")
+        safe_model = copilot.model_name.replace("/", "_").replace("\\", "_")
+        csv_path = os.path.join(self.tables_dir, f"{experiment_name}_{safe_model}_{int(time.time())}.csv")
+        os.makedirs(os.path.dirname(csv_path), exist_ok=True)
         df.to_csv(csv_path, index=False)
         print(f"[+] Saved raw experiment results to {csv_path}")
         return df
@@ -113,7 +115,9 @@ class BenchmarkRunner:
             **latency_stats
         }
 
-        json_path = os.path.join(self.tables_dir, f"{experiment_name}_{copilot.model_name}_{int(time.time())}.json")
+        safe_model = copilot.model_name.replace("/", "_").replace("\\", "_")
+        json_path = os.path.join(self.tables_dir, f"{experiment_name}_{safe_model}_{int(time.time())}.json")
+        os.makedirs(os.path.dirname(json_path), exist_ok=True)
         with open(json_path, "w") as f:
             json.dump(summary, f, indent=2)
         print(f"[+] Saved benign utility metrics to {json_path}")
