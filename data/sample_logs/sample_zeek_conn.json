@@ -1,0 +1,6 @@
+{"ts":1727390001.12,"id.orig_h":"192.168.10.15","id.orig_p":49821,"id.resp_h":"142.250.190.46","id.resp_p":443,"proto":"tcp","service":"ssl","duration":1.42,"orig_bytes":1420,"resp_bytes":5231,"conn_state":"SF","history":"ShADadfF"}
+{"ts":1727390002.45,"id.orig_h":"192.168.10.22","id.orig_p":51200,"id.resp_h":"192.168.10.1","id.resp_p":53,"proto":"udp","service":"dns","duration":0.02,"orig_bytes":68,"resp_bytes":184,"conn_state":"SF","history":"Dd"}
+{"ts":1727390003.88,"id.orig_h":"10.0.5.99","id.orig_p":44120,"id.resp_h":"192.168.10.50","id.resp_p":22,"proto":"tcp","service":"ssh","duration":0.8,"orig_bytes":820,"resp_bytes":1050,"conn_state":"SF","history":"ShADadFf"}
+{"ts":1727390004.15,"id.orig_h":"185.220.101.5","id.orig_p":39102,"id.resp_h":"192.168.10.80","id.resp_p":80,"proto":"tcp","service":"http","duration":0.01,"orig_bytes":0,"resp_bytes":0,"conn_state":"S0","history":"S"}
+{"ts":1727390005.67,"id.orig_h":"185.220.101.5","id.orig_p":39103,"id.resp_h":"192.168.10.80","id.resp_p":81,"proto":"tcp","service":null,"duration":0.00,"orig_bytes":0,"resp_bytes":0,"conn_state":"S0","history":"S"}
+{"ts":1727390006.01,"id.orig_h":"185.220.101.5","id.orig_p":39104,"id.resp_h":"192.168.10.80","id.resp_p":82,"proto":"tcp","service":null,"duration":0.00,"orig_bytes":0,"resp_bytes":0,"conn_state":"S0","history":"S"}

@@ -1,0 +1,4 @@
+{"ts":1727390020.05,"id.orig_h":"192.168.10.15","id.orig_p":53100,"id.resp_h":"1.1.1.1","id.resp_p":53,"proto":"udp","query":"api.github.com","qtype_name":"A","rcode_name":"NOERROR","answers":["140.82.121.6"]}
+{"ts":1727390021.45,"id.orig_h":"192.168.10.15","id.orig_p":53102,"id.resp_h":"1.1.1.1","id.resp_p":53,"proto":"udp","query":"updates.microsoft.com","qtype_name":"A","rcode_name":"NOERROR","answers":["20.82.210.3"]}
+{"ts":1727390025.90,"id.orig_h":"192.168.10.99","id.orig_p":58911,"id.resp_h":"8.8.8.8","id.resp_p":53,"proto":"udp","query":"a8f3b20c91.c2-exfiltration-domain.xyz","qtype_name":"TXT","rcode_name":"NOERROR","answers":["cmd=whoami;cat /etc/passwd"]}
+{"ts":1727390027.12,"id.orig_h":"192.168.10.99","id.orig_p":58912,"id.resp_h":"8.8.8.8","id.resp_p":53,"proto":"udp","query":"beacon-30s.badactor-c2.ru","qtype_name":"A","rcode_name":"NXDOMAIN","answers":[]}
