@@ -263,6 +263,21 @@ def build_docx_report():
                 cap_run.font.size = Pt(9.5)
                 cap_run.font.color.rgb = RGBColor(0x55, 0x55, 0x55)
 
+        if "5.4 Cross-Architecture Comparison" in line:
+            fig3_path = os.path.abspath("results/figures/cross_architecture_comparison.png")
+            if os.path.exists(fig3_path):
+                fp = doc.add_paragraph()
+                fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                fp.paragraph_format.space_before = Pt(8)
+                fp.paragraph_format.space_after = Pt(4)
+                fp.add_run().add_picture(fig3_path, width=Inches(5.8))
+                cap = doc.add_paragraph()
+                cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                cap_run = cap.add_run("Figure 3: Cross-Architecture Vulnerability Comparison Across Attack Categories (GPT-OSS-20B vs. Qwen-27B)")
+                cap_run.font.italic = True
+                cap_run.font.size = Pt(9.5)
+                cap_run.font.color.rgb = RGBColor(0x55, 0x55, 0x55)
+
         i += 1
 
     if in_table:

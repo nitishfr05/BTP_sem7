@@ -1,0 +1,12 @@
+{
+  "model": "qwen/qwen3.8-27b",
+  "defences": "none",
+  "fsr": 0.0,
+  "falsely_suppressed": 0,
+  "total": 2,
+  "mean_ms": 14535.29,
+  "median_ms": 14535.29,
+  "p95_ms": 17687.32,
+  "p99_ms": 17967.5,
+  "std_ms": 3502.25
+}

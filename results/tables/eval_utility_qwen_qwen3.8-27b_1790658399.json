@@ -1,0 +1,12 @@
+{
+  "model": "qwen/qwen3.8-27b",
+  "defences": "boundary_awareness+spotlighting+classifier_filter",
+  "fsr": 0.0,
+  "falsely_suppressed": 0,
+  "total": 2,
+  "mean_ms": 11892.42,
+  "median_ms": 11892.42,
+  "p95_ms": 13705.54,
+  "p99_ms": 13866.7,
+  "std_ms": 2014.58
+}
