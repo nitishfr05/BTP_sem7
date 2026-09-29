@@ -24,7 +24,7 @@ Security Operations Centers (SOCs) and network engineering teams are increasingl
 
 This mid-term report details our investigation into the exploitability of network-layer telemetry, the susceptibility of distinct log channels, and the practical utility trade-offs of proposed sanitization defences. To date, we have: (1) built a modular, lab-scale telemetry ingestion and evaluation harness; (2) developed an attack taxonomy consisting of four distinct injection categories mapped across five network telemetry channels; (3) implemented three layered defence baselines (boundary-awareness prompting, spotlighting/data-marking, and heuristic pre-filtering); and (4) conducted empirical vulnerability evaluations using live inference on an open-weight 20-billion parameter model (`openai/gpt-oss-20b`). 
 
-Our preliminary findings show a baseline Injection Success Rate (ISR) of **27.5%**, with **Context Manipulation** emerging as the single most dangerous vector (**70.0% ISR**), while **Suricata alert signature fields (`alert_msg`)** represent the most vulnerable telemetry channel (**75.0% ISR**). Our combined defence suite reduced the overall ISR from **27.5% down to 5.0%** (an **81.8% relative reduction**) with zero false suppression (**0.0% FSR**) on legitimate traffic, at an added latency overhead of ~1.5 seconds per query. We outline our completed milestones, ongoing VMware-based virtualized testbed integration, and timeline for the remainder of the semester targeting submission to peer-reviewed security venues.
+Our preliminary pilot-phase findings, based on a 40-test matrix per model (2 base malicious records $\times$ 4 representative payloads $\times$ 5 channels), show a baseline Injection Success Rate (ISR) of **27.5%**, with **Context Manipulation** emerging as the single most dangerous vector (**70.0% ISR**), while **Suricata alert signature fields (`alert_msg`)** represent the most vulnerable telemetry channel (**75.0% ISR**). Our combined defence suite reduced the overall ISR from **27.5% down to 5.0%** (an **81.8% relative reduction**) with zero false suppression on the limited benign sample tested, at an added latency overhead of ~1.5 seconds per query. We outline our completed milestones, acknowledge pilot-scale limitations, describe ongoing VMware-based virtualized testbed integration, and present the timeline for scaled evaluation in the remainder of the semester.
 
 ---
 
@@ -252,15 +252,15 @@ To generate authentic network ground truth, we developed a complete testbed prov
 
 ## 5. Experimental Results, Analysis & Discussion
 
-To evaluate the real-world vulnerability of network monitoring copilots and verify cross-model generalizability, we conducted empirical benchmarks across two distinct open-weight model architectures:
+To evaluate the real-world vulnerability of network monitoring copilots and verify cross-model generalizability, we conducted pilot-scale empirical benchmarks across two distinct open-weight model architectures:
 1. **`openai/gpt-oss-20b`** (20-billion parameter open dense transformer)
 2. **`qwen/qwen3.8-27b`** (27-billion parameter Qwen-family transformer)
 
-Each model was subjected to an identical 40-test attack matrix (10 malicious network telemetry records $\times$ 4 payload categories $\times$ 5 protocol channels) under two conditions:
+Each model was subjected to an identical **40-test pilot attack matrix** constructed as follows: **2 base malicious Zeek connection records** $\times$ **1 representative payload per attack category** (4 categories) $\times$ **5 protocol channels** = **40 injection tests per condition**. We selected one canonical payload from each of the four attack categories (DO-01, PH-01, CM-01, and EO-B64) to serve as representative probes for the pilot phase; the full 23-payload corpus is reserved for the scaled evaluation in the second half of the semester. Each model was tested under two conditions:
 * **Baseline Condition:** Standard copilot prompting with zero defences.
 * **Defended Condition:** The full layered defence suite active (Boundary-Awareness + Spotlighting Data-Marking + Heuristic Pre-Filter).
 
-In addition, clean benign network records were evaluated to quantify the False Suppression Rate (FSR) and latency overhead.
+In addition, clean benign network records (2 per condition) were evaluated to provide an initial check on the False Suppression Rate (FSR) and latency overhead. We acknowledge that this benign sample is insufficient for definitive FSR claims and plan to expand it to 50+ records in the next phase.
 
 ### 5.1 Overall Security & Utility Performance Across Architectures
 
@@ -282,7 +282,7 @@ The comparative benchmark results across both foundation models are summarized b
 └───────────────────────────────────────┴─────────────────┴─────────────────┴─────────────────┴─────────────────┘
 ```
 
-> **Key Milestone Achievement:** Across both model families, our layered defence suite reduced injection vulnerabilities by **over 80% to 100%**, driving residual risk to **5.0% on GPT-OSS-20B** and **0.0% on Qwen-27B**, while maintaining a **flawless 0.0% False Suppression Rate** on legitimate network traffic.
+> **Pilot Milestone Finding:** In this initial pilot evaluation, our layered defence suite reduced injection vulnerabilities by **over 80% to 100%**, driving residual risk to **5.0% on GPT-OSS-20B** and **0.0% on Qwen-27B**, while producing **zero false suppressions** on the limited benign sample tested. These directional findings are encouraging but require validation at larger scale (see Section 6.3 — Limitations).
 
 ---
 
@@ -419,8 +419,24 @@ Our empirical findings align with and substantially extend the conclusions of Pa
 * We differentiated our work by proving that **vulnerability is not uniform across log fields**: Suricata alert messages carry a 75% baseline risk, whereas DNS queries carry 0%. This granular channel analysis has not been reported in prior literature.
 * We quantified the utility cost: demonstrating that layered input defences can achieve an 80%+ security gain with 0% false suppression on legitimate telemetry.
 
-### 6.3 Remaining Work Plan for the Semester
-To expand this mid-term benchmark into a full conference-ready research paper, our remaining work over Weeks 9–16 will focus on:
+### 6.3 Limitations of the Pilot-Phase Evaluation
+
+We explicitly acknowledge several limitations of this mid-term pilot evaluation that constrain the generalizability of the reported findings. These limitations are deliberate scoping decisions for the first half of the semester and are systematically addressed in our remaining work plan (Section 6.4).
+
+1. **Small Base Record Set:** The pilot evaluation used only **2 base malicious Zeek connection records** (`zeek-conn-3` and `zeek-conn-4`) as injection targets. Both originate from the same source IP and share similar connection characteristics. This limits the diversity of network telemetry contexts tested — HTTP request records, DNS transaction records, and Suricata EVE alert records were not represented as base targets. The full evaluation (Weeks 11–13) will expand the malicious record corpus to 500+ records spanning all log types, sourced from live VMware testbed traffic.
+
+2. **Single Representative Payload per Category:** From our full bank of 23 curated payloads (8 Direct Override, 6 Persona Hijack, 5 Context Manipulation, 4 Encoding/Obfuscation), we tested **one canonical payload per category** (DO-01, PH-01, CM-01, EO-B64) in the pilot phase. Category-level ISR findings therefore reflect the effectiveness of individual payload exemplars rather than comprehensive category coverage. The scaled evaluation will deploy all 23 payloads.
+
+3. **Limited Benign Sample for FSR:** The False Suppression Rate was measured on only **2 benign records per condition**. While the observed 0% FSR is directionally positive, a definitive FSR claim requires testing against 50–100+ diverse benign records covering normal web browsing, DNS lookups, SSH sessions, and routine internal traffic patterns.
+
+4. **Classification Only — No Summarization Evaluation:** All experiments in this pilot phase evaluate the **classification task** exclusively. Our proposal also targets summarization-task vulnerability (consistent with Pandey & Bhujang's finding of 96% ISR on summarization [6]). Summarization attack evaluation is planned for the second half of the semester.
+
+5. **Combined Defence Suite Without Ablation:** Defences were evaluated as a combined layered stack (all three active simultaneously). We have not yet conducted ablation studies isolating the contribution of each individual defence (boundary-awareness alone, spotlighting alone, heuristic filter alone). Ablation experiments are planned for Weeks 9–10 to determine which defence mechanism drives the observed ISR reduction for each attack category.
+
+6. **Statistical Power:** With 40 observations per condition and 8–10 per sub-group (category or channel), individual percentage differences are influenced by single classification outcomes. Formal statistical significance testing (Fisher's exact test) will be applied once sample sizes are scaled to support meaningful inference.
+
+### 6.4 Remaining Work Plan for the Semester
+To expand this mid-term pilot benchmark into a full conference-ready research paper, our remaining work over Weeks 9–16 will focus on:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
