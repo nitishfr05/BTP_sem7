@@ -1,0 +1,15 @@
+\begin{table*}[t]
+\centering
+\caption{Injection Success Rate (\%) across Telemetry Channels and Model Architectures under Baseline vs. Defended Conditions.}
+\label{tab:rq1_rq2_results}
+\begin{tabular}{llccccc}
+\toprule
+\textbf{Model} & \textbf{Defences} & \textbf{Alert Msg} & \textbf{Alert Desc} & \textbf{User-Agent} & \textbf{Raw Log} & \textbf{DNS Query} \\
+\midrule
+gpt-oss-20b & boundary_awareness+spotlighting+classifier_filter & 25.0\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% \\
+gpt-oss-20b & None (Baseline) & 75.0\% & 25.0\% & 25.0\% & 12.5\% & 0.0\% \\
+qwen3.8-27b & boundary_awareness+spotlighting+classifier_filter & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% \\
+qwen3.8-27b & None (Baseline) & 25.0\% & 25.0\% & 0.0\% & 37.5\% & 0.0\% \\
+\bottomrule
+\end{tabular}
+\end{table*}
