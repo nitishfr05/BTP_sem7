@@ -8,7 +8,7 @@ set -e
 
 echo "=== [1/5] Updating System Packages ==="
 sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install -y build-essential git curl wget jq python3 python3-pip python3-venv \
+sudo apt-get install -y build-essential git curl wget jq python3 python3-pip python3-venv python3-scapy python3-requests \
                         net-tools tcpdump tshark hping3 nmap hydra nikto sqlmap dnsutils
 
 echo "=== [2/5] Installing Suricata IDS ==="
