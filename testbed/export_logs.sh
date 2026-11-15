@@ -8,6 +8,7 @@ mkdir -p "$EXPORT_DIR"
 
 echo "[*] Collecting Zeek JSON logs..."
 cp /opt/zeek/logs/current/*.log "$EXPORT_DIR/" 2>/dev/null || true
+cp /tmp/zeek_logs/*.log "$EXPORT_DIR/" 2>/dev/null || true
 
 echo "[*] Collecting Suricata EVE logs..."
 cp /var/log/suricata/eve.json "$EXPORT_DIR/" 2>/dev/null || true
