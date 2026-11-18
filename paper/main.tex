@@ -139,6 +139,10 @@ Importantly, we evaluated the operational utility cost:
     \item \textbf{Latency Overhead:} On GPT-OSS-20B, defended latency was 7,119.3\,ms versus 5,619.6\,ms at baseline (+1,499.7\,ms). On Qwen-27B, the defended pipeline was actually \textit{faster} on average (11,892.4\,ms vs 14,535.3\,ms) because the heuristic filter intercepted malicious records in $<1$\,ms, bypassing costly LLM inference calls entirely.
 \end{itemize}
 
+\subsection{Evaluation on Authentic Live Testbed Telemetry}
+To address the critical limitation of synthetic datasets, we evaluated the copilot against telemetry captured from our VMware Ubuntu testbed running production Zeek and Suricata daemons. Real network traffic—including TCP SYN port scans, HTTP attacks, and DNS tunneling—was injected over the virtual network interface via Scapy.
+On authentic Zeek connection records, baseline vulnerability was pronounced: the copilot exhibited a \textbf{62.5\% ISR} (25/40 attacks succeeded), as the model struggled to reconcile raw network flags with injected narrative text. Under defended conditions, our multi-layered stack reduced the ISR to \textbf{5.0\%} (2/40), representing a 92.0\% relative reduction. A 2$\times$2 contingency Fisher's Exact test demonstrates extraordinary statistical significance: Odds Ratio $= 31.67$, $p = 4.20 \times 10^{-8}$. Furthermore, defended latency on live data dropped from 9,597.7\,ms to 6,480.9\,ms due to heuristic pre-filtering, while maintaining \textbf{0.0\% FSR}.
+
 \section{Discussion and Recommendations}
 Our results highlight the operational peril of \textbf{Context Manipulation}. While direct overrides (\textit{``Ignore rules''}) are readily blocked by keyword filters, context manipulation mimics legitimate administrative exceptions (e.g., claiming traffic is a scheduled Nessus scan). Future SOC copilots must implement cryptographic provenance verification rather than relying solely on textual prompts.
 
