@@ -83,8 +83,8 @@ def main():
                         help="Run full defence ablation sweep (none, boundary, spotlighting, filter, combined)")
     parser.add_argument("--channels", type=str, default="all",
                         help="Comma-separated channels: all, raw_log, user_agent, dns_query, alert_msg, alert_desc")
-    parser.add_argument("--dataset", type=str, choices=["sample", "expanded"], default="expanded",
-                        help="Dataset to load: 'sample' (18 pilot records) or 'expanded' (230 diverse records)")
+    parser.add_argument("--dataset", type=str, choices=["sample", "expanded", "testbed"], default="testbed",
+                        help="Dataset to load: 'sample' (18 pilot records), 'expanded' (230 diverse records), or 'testbed' (live VM logs)")
     parser.add_argument("--task", type=str, choices=["classification", "summarization", "both"], default="classification",
                         help="Task to evaluate: 'classification', 'summarization', or 'both'")
     parser.add_argument("--quick", action="store_true",
@@ -108,7 +108,12 @@ def main():
         sys.exit(1)
 
     # Resolve dataset path
-    data_dir = "data/expanded_logs" if args.dataset == "expanded" else "data/sample_logs"
+    if args.dataset == "testbed":
+        data_dir = "testbed"
+    elif args.dataset == "expanded":
+        data_dir = "data/expanded_logs"
+    else:
+        data_dir = "data/sample_logs"
     benign_logs, malicious_logs = load_dataset(data_dir)
 
     if args.max_records and args.max_records > 0:

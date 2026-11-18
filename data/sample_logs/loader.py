@@ -1,4 +1,4 @@
-"""Utility loader to parse datasets (sample or expanded) and partition into benign and malicious records."""
+"""Utility loader to parse datasets (sample, expanded, or live testbed logs) and partition into benign and malicious records."""
 
 import os
 import glob
@@ -9,11 +9,22 @@ from src.copilot.log_parsers import parse_zeek_log, parse_suricata_eve, NetworkL
 def load_dataset(data_dir: str = "data/expanded_logs") -> Tuple[List[NetworkLogRecord], List[NetworkLogRecord]]:
     """
     Load Zeek and Suricata logs from data_dir and return (benign_records, malicious_records).
-    Supports both sample_logs and expanded_logs.
+    Supports:
+      - 'data/sample_logs'
+      - 'data/expanded_logs'
+      - 'data/raw_logs' or 'testbed' (auto-resolves btp_final_testbed_logs)
     """
+    if data_dir in ["testbed", "live", "raw"]:
+        # Find directory containing testbed logs
+        candidate = "data/raw_logs/btp_final_testbed_logs/final_testbed_logs"
+        if os.path.exists(candidate):
+            data_dir = candidate
+        else:
+            data_dir = "data/raw_logs"
+
     if not os.path.exists(data_dir):
-        # Fallback to sample_logs if expanded_logs doesn't exist
-        data_dir = "data/sample_logs"
+        # Fallback to expanded_logs or sample_logs
+        data_dir = "data/expanded_logs" if os.path.exists("data/expanded_logs") else "data/sample_logs"
 
     benign: List[NetworkLogRecord] = []
     malicious: List[NetworkLogRecord] = []
@@ -21,7 +32,7 @@ def load_dataset(data_dir: str = "data/expanded_logs") -> Tuple[List[NetworkLogR
     # Find matching files in directory
     for f in os.listdir(data_dir):
         full_path = os.path.join(data_dir, f)
-        if not f.endswith(".json"):
+        if not (f.endswith(".json") or f.endswith(".log")):
             continue
 
         if "conn" in f:
@@ -30,6 +41,8 @@ def load_dataset(data_dir: str = "data/expanded_logs") -> Tuple[List[NetworkLogR
                 if gt:
                     rec.ground_truth = gt
                 elif "185.220.101" in rec.source_ip or rec.dest_port in [81, 82]:
+                    rec.ground_truth = "malicious"
+                elif rec.dest_port in [80, 8080, 21, 22, 23, 25, 443, 3306] and rec.raw_fields.get("conn_state") in ["RSTRH", "S0", "REJ"]:
                     rec.ground_truth = "malicious"
                 else:
                     rec.ground_truth = "benign"
@@ -59,7 +72,7 @@ def load_dataset(data_dir: str = "data/expanded_logs") -> Tuple[List[NetworkLogR
                 gt = rec.raw_fields.get("_ground_truth")
                 if gt:
                     rec.ground_truth = gt
-                elif "c2-" in rec.summary_text or "badactor" in rec.summary_text or "dga" in rec.summary_text or "exfil" in rec.summary_text:
+                elif any(k in rec.summary_text.lower() for k in ["c2-", "badactor", "dga", "exfil"]):
                     rec.ground_truth = "malicious"
                 else:
                     rec.ground_truth = "benign"
@@ -76,7 +89,12 @@ def load_dataset(data_dir: str = "data/expanded_logs") -> Tuple[List[NetworkLogR
                     rec.ground_truth = gt
                 else:
                     severity = rec.raw_fields.get("severity", 3)
-                    rec.ground_truth = "malicious" if severity <= 2 else "benign"
+                    if rec.log_type == "alert" and severity <= 2:
+                        rec.ground_truth = "malicious"
+                    elif any(k in rec.summary_text.lower() for k in ["sql", "attack", "exploit", "trojan"]):
+                        rec.ground_truth = "malicious"
+                    else:
+                        rec.ground_truth = "benign"
 
                 if rec.ground_truth == "malicious":
                     malicious.append(rec)
