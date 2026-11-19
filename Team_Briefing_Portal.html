@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BTP Sem-7: Team Briefing & Interactive Viva Portal</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --secondary: #0f766e;
+      --accent: #dc2626;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --warning: #d97706;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding: 20px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    header { background: linear-gradient(135deg, #1e3a8a, #0f766e); color: white; padding: 24px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    header h1 { font-size: 1.6rem; margin-bottom: 6px; }
+    header p { font-size: 0.95rem; opacity: 0.9; }
+    .badge-bar { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 500; }
+
+    /* Navigation Tabs */
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 8px; overflow-x: auto; }
+    .tab-btn { background: none; border: none; padding: 10px 18px; border-radius: 8px; font-size: 0.95rem; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .tab-btn:hover { background: #e2e8f0; color: var(--text); }
+    .tab-btn.active { background: var(--primary); color: white; }
+
+    /* Tab Contents */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.25s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card h2 { font-size: 1.25rem; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .card h3 { font-size: 1.05rem; color: var(--secondary); margin: 14px 0 6px 0; }
+
+    /* Search Input */
+    .search-box { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; margin-bottom: 16px; transition: border-color 0.2s; }
+    .search-box:focus { outline: none; border-color: var(--primary-light); }
+
+    /* Accordion FAQ */
+    .accordion-item { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; background: white; }
+    .accordion-header { padding: 14px 18px; background: #f8fafc; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.95rem; color: var(--text); user-select: none; }
+    .accordion-header:hover { background: #f1f5f9; color: var(--primary); }
+    .accordion-header .tag { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; background: #e2e8f0; color: #475569; margin-left: 8px; }
+    .accordion-body { padding: 16px 18px; display: none; border-top: 1px solid var(--border); font-size: 0.9rem; line-height: 1.6; color: #334155; }
+    .accordion-item.open .accordion-body { display: block; }
+    .accordion-item.open .accordion-header { background: #eff6ff; color: var(--primary); }
+
+    /* Interactive Pipeline */
+    .pipeline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
+    .pipeline-step { background: #f8fafc; border: 2px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; cursor: pointer; transition: all 0.2s; }
+    .pipeline-step:hover { border-color: var(--primary-light); transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .pipeline-step.active { border-color: var(--primary); background: #eff6ff; }
+    .pipeline-step .step-num { display: inline-block; width: 24px; height: 24px; background: var(--primary); color: white; border-radius: 50%; font-size: 0.8rem; line-height: 24px; margin-bottom: 6px; }
+    .pipeline-step h4 { font-size: 0.95rem; margin-bottom: 4px; }
+    .pipeline-detail-card { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px; margin-top: 12px; }
+
+    /* Metrics Table */
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9rem; }
+    th, td { padding: 10px 14px; border: 1px solid var(--border); text-align: left; }
+    th { background: #f1f5f9; color: var(--primary); font-weight: 600; }
+    tr:nth-child(even) { background: #f8fafc; }
+    .highlight-red { color: var(--accent); font-weight: 700; }
+    .highlight-green { color: var(--success); font-weight: 700; }
+
+    /* Quiz Area */
+    .quiz-card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 14px; }
+    .quiz-question { font-weight: 600; font-size: 1rem; color: #1e293b; margin-bottom: 10px; }
+    .quiz-btn { background: var(--secondary); color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; margin-top: 8px; }
+    .quiz-btn:hover { opacity: 0.9; }
+    .quiz-answer { display: none; margin-top: 12px; padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; font-size: 0.9rem; color: #166534; line-height: 1.5; }
+
+    /* Doubt Drafter */
+    .textarea-box { width: 100%; height: 120px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; margin-bottom: 10px; resize: vertical; }
+    .action-btn { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .action-btn:hover { background: #1d4ed8; }
+    .copy-success { color: var(--success); font-size: 0.85rem; font-weight: 600; margin-left: 10px; display: none; }
+
+    /* Callout */
+    .callout { padding: 14px; border-left: 4px solid var(--primary); background: #eff6ff; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 0.9rem; }
+    .callout-amber { border-left-color: var(--warning); background: #fefce8; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>BTP Sem-7 Team Briefing & Interactive Viva Portal</h1>
+    <p>Adversarial Robustness of LLM-Based Network Monitoring Copilots</p>
+    <div class="badge-bar">
+      <span class="badge">Team: Sumit (3060), Nitish (3039), Anand (3061)</span>
+      <span class="badge">Supervisor: Dr. Nisha Kandhoul</span>
+      <span class="badge">IT Dept, NSUT Delhi</span>
+      <span class="badge">Academic Year 2026–2027</span>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('tab-walkthrough')">1. Elevator Pitch & Roles</button>
+    <button class="tab-btn" onclick="switchTab('tab-pipeline')">2. System Pipeline Explorer</button>
+    <button class="tab-btn" onclick="switchTab('tab-glossary')">3. Searchable Concept Q&A</button>
+    <button class="tab-btn" onclick="switchTab('tab-numbers')">4. Results & Numbers Sheet</button>
+    <button class="tab-btn" onclick="switchTab('tab-quiz')">5. Mock Viva Simulator</button>
+    <button class="tab-btn" onclick="switchTab('tab-doubts')">6. Team Doubt Drafter</button>
+  </div>
+
+  <!-- TAB 1: WALKTHROUGH & ROLES -->
+  <div id="tab-walkthrough" class="tab-content active">
+    <div class="card">
+      <h2>30-Second Opening Script (For Any Team Member)</h2>
+      <div class="callout">
+        "Modern Security Operations Centers (SOCs) are adopting Large Language Models to triage thousands of daily network alerts. However, because LLMs process system instructions and untrusted data in the exact same token attention stream, an attacker can embed malicious instructions inside routine network traffic—such as DNS queries and HTTP User-Agents—to blind alerts or trigger unauthorized commands. We evaluated 5 protocol channels across models up to 120B parameters, validated on a live VMware Zeek/Suricata testbed, and proved our 3-tier layered defence drops attack success from 65% to 2.5% with zero false alarms."
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Recommended Meeting Role Split (Divide & Conquer)</h2>
+      <p style="margin-bottom: 12px; color: var(--text-muted);">When meeting Dr. Nisha Kandhoul today, you can seamlessly divide the presentation into 3 logical parts:</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+        <div style="border: 1px solid var(--border); padding: 14px; border-radius: 8px; background: #f8fafc;">
+          <h3 style="color: var(--primary); margin-top:0;">1. Sumit Kumar (3060)</h3>
+          <p><b>Topic:</b> Motivation, Threat Model & Attack Taxonomy</p>
+          <ul style="margin: 8px 0 0 16px; font-size: 0.85rem; color: #475569;">
+            <li>SOC alert fatigue (1000+ daily alerts).</li>
+            <li>Instruction-data confusion in LLM attention.</li>
+            <li>4 Attack Categories (Canary, Leakage, False Assessment, Command Injection).</li>
+            <li>5 Protocol Channels (DNS, User-Agent, URI, TLS, SSH).</li>
+          </ul>
+        </div>
+
+        <div style="border: 1px solid var(--border); padding: 14px; border-radius: 8px; background: #f8fafc;">
+          <h3 style="color: var(--secondary); margin-top:0;">2. Nitish Kumar Sah (3039)</h3>
+          <p><b>Topic:</b> Architecture, Testbed & 3-Tier Defence</p>
+          <ul style="margin: 8px 0 0 16px; font-size: 0.85rem; color: #475569;">
+            <li>VMware Ubuntu testbed with Zeek 5.0 & Suricata 7.0.</li>
+            <li>Python Scapy raw packet simulation.</li>
+            <li>Pydantic <code>NetworkLogRecord</code> schema normalization.</li>
+            <li>The 3 layers: Boundary Prompt, XML Spotlighting, Heuristic Pre-filter.</li>
+          </ul>
+        </div>
+
+        <div style="border: 1px solid var(--border); padding: 14px; border-radius: 8px; background: #f8fafc;">
+          <h3 style="color: var(--accent); margin-top:0;">3. Anand Kumar (3061)</h3>
+          <p><b>Topic:</b> Results, 120B Paradox & Ablation</p>
+          <ul style="margin: 8px 0 0 16px; font-size: 0.85rem; color: #475569;">
+            <li>Baseline vulnerability (65.0% ISR).</li>
+            <li><b>Instruction-Following Paradox</b>: 120B model is MORE vulnerable (+12.5%).</li>
+            <li>5-Condition Ablation: Delimiters alone fail (-2.5%), Full stack drops to 2.5%.</li>
+            <li>Live testbed proof (Fisher's exact p = 4.2x10^-8, 0% False alarms).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: PIPELINE EXPLORER -->
+  <div id="tab-pipeline" class="tab-content">
+    <div class="card">
+      <h2>Interactive End-to-End Pipeline Explorer</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Click any stage below to inspect its exact technical operation and why it matters:</p>
+
+      <div class="pipeline-grid">
+        <div class="pipeline-step active" onclick="showPipelineStep(1)">
+          <div class="step-num">1</div>
+          <h4>Raw Traffic Gen</h4>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Scapy & VMware</span>
+        </div>
+        <div class="pipeline-step" onclick="showPipelineStep(2)">
+          <div class="step-num">2</div>
+          <h4>Sensor Logging</h4>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Zeek & Suricata</span>
+        </div>
+        <div class="pipeline-step" onclick="showPipelineStep(3)">
+          <div class="step-num">3</div>
+          <h4>Log Normalization</h4>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Pydantic Schema</span>
+        </div>
+        <div class="pipeline-step" onclick="showPipelineStep(4)">
+          <div class="step-num">4</div>
+          <h4>Pre-Filter Layer</h4>
+          <span style="font-size:0.75rem; color:var(--text-muted);">&lt;1ms Regex</span>
+        </div>
+        <div class="pipeline-step" onclick="showPipelineStep(5)">
+          <div class="step-num">5</div>
+          <h4>Prompt Hardening</h4>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Boundary & Tags</span>
+        </div>
+        <div class="pipeline-step" onclick="showPipelineStep(6)">
+          <div class="step-num">6</div>
+          <h4>LLM Copilot</h4>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Structured Triage</span>
+        </div>
+      </div>
+
+      <div id="pipeline-detail" class="pipeline-detail-card">
+        <h3 id="step-title" style="margin-top:0; color:var(--primary);">Step 1: Raw Traffic Generation (Scapy on VMware Ubuntu)</h3>
+        <p id="step-desc" style="font-size:0.9rem; line-height:1.6; color:#1e293b;">
+          Instead of testing synthetic mock strings, we deployed an Ubuntu 22.04 LTS virtual machine on VMware Workstation. Using Scapy, we generated genuine Layer 4–7 packets (TCP handshakes, UDP datagrams, HTTP GETs, DNS lookups, TLS Client Hellos, SSH banners) containing our 23 attack payloads formatted to respect RFC length and character constraints.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: SEARCHABLE GLOSSARY & CONCEPT Q&A -->
+  <div id="tab-glossary" class="tab-content">
+    <div class="card">
+      <h2>Searchable Concept Glossary & Viva Doubts</h2>
+      <input type="text" id="faq-search" class="search-box" placeholder="Type to search (e.g., 'paradox', 'delimiters', 'fisher', 'ablation', 'pre-filter', 'channels')..." onkeyup="filterFAQ()">
+
+      <div id="faq-container">
+        <!-- Item 1 -->
+        <div class="accordion-item open">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>What is the "Instruction-Following Paradox"? <span class="tag">Scale</span></span>
+            <span>+</span>
+          </div>
+          <div class="accordion-body">
+            <b>Explanation:</b> When scaling model size from 20B (GPT-OSS-20B) to 120B (GPT-OSS-120B), injection vulnerability increased from 62.5% to 75.0% (+12.5% jump). Frontier models undergo intense alignment (RLHF) to follow instructions diligently. When an attacker plants an imperative command inside untrusted data, the 120B model obeys it more faithfully than smaller models whose attention heads might dilute or overlook the payload.
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>Why did Spotlighting (XML tags) fail when used alone? <span class="tag">Ablation</span></span>
+            <span>+</span>
+          </div>
+          <div class="accordion-body">
+            <b>Explanation:</b> In our ablation sweep, wrapping logs in <code>&lt;untrusted_network_log_data&gt;</code> without modifying the system prompt only caused a 2.5% drop in ISR (65.0% &rarr; 62.5%). Delimiters are purely visual/syntactic formatting tokens. To a transformer's self-attention mechanism, words inside XML tags are still processed as natural language instructions unless the system prompt explicitly commands the model to treat them as inert, passive observations.
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>What is the statistical significance of the live testbed evaluation? <span class="tag">Statistics</span></span>
+            <span>+</span>
+          </div>
+          <div class="accordion-body">
+            <b>Explanation:</b> On the live VMware testbed running Zeek 5.0 and Suricata 7.0, the baseline attack success was 62.5% (25/40), and the defended pipeline dropped it to 5.0% (2/40). Fisher's Exact Test yields an Odds Ratio of 31.67 and a p-value of 4.20 &times; 10<sup>-8</sup> (far below the standard significance threshold &alpha; = 0.001), formally proving that the defence's effectiveness is not due to random chance.
+          </div>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>Why is DNS the most vulnerable channel (75.0% ISR)? <span class="tag">Channels</span></span>
+            <span>+</span>
+          </div>
+          <div class="accordion-body">
+            <b>Explanation:</b> DNS query strings are natively leveraged by command-and-control (C2) servers for data exfiltration and tunneling. Because DNS lookups are parsed and logged directly into both Zeek (<code>dns.log</code>) and Suricata (<code>eve.json</code>), injected subdomains and base64 payloads directly populate the LLM copilot's primary context field without stripping.
+          </div>
+        </div>
+
+        <!-- Item 5 -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>What is False Suppression Rate (FSR) and why is it 0.0%? <span class="tag">Utility</span></span>
+            <span>+</span>
+          </div>
+          <div class="accordion-body">
+            <b>Explanation:</b> FSR measures whether the defence erroneously blocks or drops legitimate benign network alerts. Across 30 benign background flows (routine HTTPS traffic, DNS queries, SSH handshakes), our pre-filter and boundary prompts produced 0 false suppressions (FSR = 0.0%). Crucially, the pre-filter short-circuits malicious requests in &lt;1ms, speeding up SOC triage by 3.1 seconds per malicious flow.
+          </div>
+        </div>
+
+        <!-- Item 6 -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>Why not just fine-tune an LLM instead of software defences? <span class="tag">Methodology</span></span>
+            <span>+</span>
+          </div>
+          <div class="accordion-body">
+            <b>Explanation:</b> Fine-tuning is computationally prohibitive, suffers from catastrophic forgetting of general reasoning, and breaks whenever a new foundation model is released. Our 3-tier software sanitization suite is model-agnostic, lightweight, operates at the application layer, and can be plugged in front of any commercial or open-source LLM API without retraining costs.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: RESULTS & NUMBERS -->
+  <div id="tab-numbers" class="tab-content">
+    <div class="card">
+      <h2>Numbers Every Team Member Should Memorize</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px;">Quick reference table of all experimental benchmark runs (560 total observations across 13 conditions):</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Condition / Model</th>
+            <th>Role in Thesis</th>
+            <th>ISR (%)</th>
+            <th>Obs.</th>
+            <th>Key Takeaway</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Baseline (Llama-3.1-8B)</b></td>
+            <td>Lightweight Baseline</td>
+            <td class="highlight-red">62.5%</td>
+            <td>40</td>
+            <td>High vulnerability across all 5 channels</td>
+          </tr>
+          <tr>
+            <td><b>Baseline (Llama-3.3-70B)</b></td>
+            <td>Enterprise Baseline</td>
+            <td class="highlight-red">67.5%</td>
+            <td>40</td>
+            <td>Slightly higher susceptibility due to attention breadth</td>
+          </tr>
+          <tr>
+            <td><b>Baseline (GPT-OSS-20B)</b></td>
+            <td>Scale Anchor (20B)</td>
+            <td class="highlight-red">62.5%</td>
+            <td>40</td>
+            <td>Reference for scale & ablation sweep</td>
+          </tr>
+          <tr>
+            <td><b>Baseline (GPT-OSS-120B)</b></td>
+            <td>Scale Frontier (120B)</td>
+            <td class="highlight-red" style="font-size:1.05rem;">75.0%</td>
+            <td>40</td>
+            <td><b>Instruction-Following Paradox (+12.5%)</b></td>
+          </tr>
+          <tr>
+            <td><b>Ablation 1: Spotlighting Only</b></td>
+            <td>XML tags alone</td>
+            <td class="highlight-red">62.5%</td>
+            <td>40</td>
+            <td>Delimiters alone fail (-2.5% drop)</td>
+          </tr>
+          <tr>
+            <td><b>Ablation 2: Pre-Filter Only</b></td>
+            <td>Regex alone</td>
+            <td style="color:var(--warning); font-weight:700;">47.5%</td>
+            <td>40</td>
+            <td>Blocks imperatives; misses context tricks</td>
+          </tr>
+          <tr>
+            <td><b>Ablation 3: Boundary Prompt Only</b></td>
+            <td>System prompt alone</td>
+            <td style="color:var(--secondary); font-weight:700;">17.5%</td>
+            <td>40</td>
+            <td>Strongest single prompt layer (-47.5% drop)</td>
+          </tr>
+          <tr>
+            <td><b>Combined Layered Stack (All 3)</b></td>
+            <td>Full Sanitization Suite</td>
+            <td class="highlight-green" style="font-size:1.05rem;">2.5%</td>
+            <td>40</td>
+            <td><b>96.2% relative risk reduction</b></td>
+          </tr>
+          <tr>
+            <td><b>Live VMware Zeek/Suricata</b></td>
+            <td>Authentic VM Telemetry</td>
+            <td class="highlight-green" style="font-size:1.05rem;">5.0%</td>
+            <td>40</td>
+            <td><b>p = 4.20 &times; 10<sup>-8</sup>, FSR = 0.0%, -3.1s latency</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 5: MOCK VIVA QUIZ -->
+  <div id="tab-quiz" class="tab-content">
+    <div class="card">
+      <h2>Interactive Mock Viva Simulator</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 14px;">Test your readiness! Read the question, try explaining it in your head, then click "Reveal Ideal Viva Answer":</p>
+
+      <!-- Quiz 1 -->
+      <div class="quiz-card">
+        <div class="quiz-question">1. Dr. Nisha: "Why can't we simply strip suspicious characters from network logs like we do in web apps?"</div>
+        <button class="quiz-btn" onclick="toggleQuizAnswer(1)">Reveal Ideal Viva Answer</button>
+        <div id="quiz-ans-1" class="quiz-answer">
+          <b>Ideal Response:</b> "Ma'am, network logs are naturally messy. Legitimate URLs, base64 tokens, and User-Agents legitimately contain slashes, brackets, and quotes. Aggressive character stripping destroys vital forensic context. Furthermore, prompt injection exploits natural language semantics ('ignore previous rules', 'mark as benign') rather than syntax errors, so simple character stripping does not stop the LLM from understanding and executing malicious intent."
+        </div>
+      </div>
+
+      <!-- Quiz 2 -->
+      <div class="quiz-card">
+        <div class="quiz-question">2. Dr. Nisha: "Explain the Instruction-Following Paradox. Why did your 120B model perform worse than the 20B model?"</div>
+        <button class="quiz-btn" onclick="toggleQuizAnswer(2)">Reveal Ideal Viva Answer</button>
+        <div id="quiz-ans-2" class="quiz-answer">
+          <b>Ideal Response:</b> "In classical security, larger systems are typically more robust. However, in LLMs, scaling from 20B to 120B increased injection vulnerability from 62.5% to 75.0%. Frontier models are heavily aligned using RLHF to follow instructions with extreme diligence. When an attacker plants an imperative command inside untrusted network data, the 120B model obeys it with higher fidelity than a smaller model whose attention heads might overlook the payload."
+        </div>
+      </div>
+
+      <!-- Quiz 3 -->
+      <div class="quiz-card">
+        <div class="quiz-question">3. Dr. Nisha: "How did you prove that this defence works on real network packets and not just synthetic text strings?"</div>
+        <button class="quiz-btn" onclick="toggleQuizAnswer(3)">Reveal Ideal Viva Answer</button>
+        <div id="quiz-ans-3" class="quiz-answer">
+          <b>Ideal Response:</b> "We deployed a dedicated Ubuntu 22.04 LTS virtual machine running Zeek 5.0 and Suricata 7.0 sensors. Using Python Scapy, we generated genuine Layer 4–7 network traffic over a virtual network interface carrying our 23 payloads within valid RFC boundaries. The sensors output genuine `conn.log`, `dns.log`, and `eve.json` files, which our pipeline parsed and defended, achieving a statistically validated reduction from 62.5% to 5.0% ISR (Fisher's exact test p = 4.2x10^-8)."
+        </div>
+      </div>
+
+      <!-- Quiz 4 -->
+      <div class="quiz-card">
+        <div class="quiz-question">4. Dr. Nisha: "Did your defence add delay or block normal IT operations?"</div>
+        <button class="quiz-btn" onclick="toggleQuizAnswer(4)">Reveal Ideal Viva Answer</button>
+        <div id="quiz-ans-4" class="quiz-answer">
+          <b>Ideal Response:</b> "No, Ma'am. We measured both security and utility. On benign traffic, our defence achieved a 0.0% False Suppression Rate (zero valid alerts blocked). Furthermore, on malicious traffic, our heuristic pre-filter short-circuited attacks in less than 1 millisecond, saving approximately 3.1 seconds of expensive LLM compute per malicious query."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: TEAM DOUBT DRAFTER -->
+  <div id="tab-doubts" class="tab-content">
+    <div class="card">
+      <h2>Team Doubt Drafter (WhatsApp / Slack Clipboard Tool)</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px;">If there is any concept you or your teammate do not fully understand, type it here and click "Copy to Clipboard" to share in your team group:</p>
+
+      <textarea id="doubt-text" class="textarea-box" placeholder="Example: Hey guys, I'm still not 100% clear on how the Fisher's exact test odds ratio of 31.67 was calculated. Can we discuss this before 2 PM?"></textarea>
+      
+      <div>
+        <button class="action-btn" onclick="copyDoubt()">
+          <span>📋 Copy Message to Clipboard</span>
+        </button>
+        <span id="copy-msg" class="copy-success">✓ Copied to clipboard! Paste into WhatsApp/Slack.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Tab Switching
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // Accordion Toggle
+  function toggleAccordion(header) {
+    const item = header.parentElement;
+    item.classList.toggle('open');
+    const symbol = header.querySelector('span:last-child');
+    symbol.textContent = item.classList.contains('open') ? '−' : '+';
+  }
+
+  // Search Filter FAQ
+  function filterFAQ() {
+    const query = document.getElementById('faq-search').value.toLowerCase();
+    const items = document.querySelectorAll('.accordion-item');
+    items.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      item.style.display = text.includes(query) ? 'block' : 'none';
+    });
+  }
+
+  // Pipeline Step Details
+  const stepDetails = {
+    1: {
+      title: "Step 1: Raw Traffic Generation (Scapy on VMware Ubuntu)",
+      desc: "Instead of testing synthetic mock strings, we deployed an Ubuntu 22.04 LTS virtual machine on VMware Workstation. Using Scapy, we generated genuine Layer 4–7 packets (TCP handshakes, UDP datagrams, HTTP GETs, DNS lookups, TLS Client Hellos, SSH banners) containing our 23 attack payloads formatted to respect RFC length and character constraints."
+    },
+    2: {
+      title: "Step 2: Sensor Capture & Logging (Zeek 5.0 + Suricata 7.0)",
+      desc: "Zeek analyzes high-level network semantics producing conn.log, dns.log, and http.log. Suricata operates as a signature-based intrusion detection engine outputting eve.json. Together, they represent standard enterprise SOC telemetry."
+    },
+    3: {
+      title: "Step 3: Unified Log Normalization (Pydantic NetworkLogRecord)",
+      desc: "Raw logs from disparate sensors have conflicting field names and formats. Our schema normalizes them into typed Pydantic objects, isolating transport metadata, protocols, and raw payload fields into canonical representations to prevent field-injection smuggling."
+    },
+    4: {
+      title: "Step 4: Heuristic Token-Boundary Pre-Filter (<1ms Scan)",
+      desc: "Before calling any LLM API, the pipeline scans the normalized log with regex patterns targeting adversarial token boundaries (\\b(ignore|disregard|override|system\\s+prompt)\\b). Blatant attacks are short-circuited in <1ms, completely eliminating LLM compute costs and latency."
+    },
+    5: {
+      title: "Step 5: Structural Spotlighting & Boundary Hardening",
+      desc: "Surviving logs are wrapped inside XML tags (<untrusted_network_log_data>...</untrusted_network_log_data>) and passed to a system prompt that explicitly establishes cognitive isolation: commanding the LLM that any text inside these tags represents passive, hostile observations that must NEVER be executed."
+    },
+    6: {
+      title: "Step 6: LLM Copilot Inference & Structured Triage",
+      desc: "The hardened prompt is dispatched via the Groq API (temperature 0.1) to generate a structured JSON assessment containing severity (CRITICAL, HIGH, MEDIUM, LOW, BENIGN), forensic reasoning, and recommended SOC actions."
+    }
+  };
+
+  function showPipelineStep(stepNum) {
+    document.querySelectorAll('.pipeline-step').forEach((el, idx) => {
+      if (idx + 1 === stepNum) el.classList.add('active');
+      else el.classList.remove('active');
+    });
+    document.getElementById('step-title').textContent = stepDetails[stepNum].title;
+    document.getElementById('step-desc').textContent = stepDetails[stepNum].desc;
+  }
+
+  // Quiz Toggle
+  function toggleQuizAnswer(num) {
+    const ans = document.getElementById('quiz-ans-' + num);
+    ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+  }
+
+  // Copy Doubt Message
+  function copyDoubt() {
+    const text = document.getElementById('doubt-text').value;
+    if (!text.trim()) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const msg = document.getElementById('copy-msg');
+      msg.style.display = 'inline';
+      setTimeout(() => { msg.style.display = 'none'; }, 3000);
+    });
+  }
+</script>
+
+</body>
+</html>
