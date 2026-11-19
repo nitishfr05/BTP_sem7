@@ -6,8 +6,12 @@
 \toprule
 \textbf{Model} & \textbf{Defences} & \textbf{Alert Msg} & \textbf{Alert Desc} & \textbf{User-Agent} & \textbf{Raw Log} & \textbf{DNS Query} \\
 \midrule
-gpt-oss-20b & boundary_awareness+spotlighting+classifier_filter & 16.7\% & 8.3\% & 0.0\% & 0.0\% & 0.0\% \\
-gpt-oss-20b & None (Baseline) & 83.3\% & 45.8\% & 20.8\% & 41.7\% & 0.0\% \\
+gpt-oss-120b & None (Baseline) & 87.5\% & 100.0\% & 62.5\% & 100.0\% & 25.0\% \\
+gpt-oss-20b & boundary_awareness & 50.0\% & 25.0\% & 0.0\% & 12.5\% & 0.0\% \\
+gpt-oss-20b & boundary_awareness+spotlighting+classifier_filter & 12.5\% & 9.4\% & 0.0\% & 0.0\% & 0.0\% \\
+gpt-oss-20b & classifier_filter & 62.5\% & 62.5\% & 25.0\% & 75.0\% & 12.5\% \\
+gpt-oss-20b & None (Baseline) & 87.5\% & 59.4\% & 21.9\% & 56.2\% & 0.0\% \\
+gpt-oss-20b & spotlighting & 100.0\% & 87.5\% & 25.0\% & 100.0\% & 0.0\% \\
 qwen3.8-27b & boundary_awareness+spotlighting+classifier_filter & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% \\
 qwen3.8-27b & None (Baseline) & 25.0\% & 25.0\% & 0.0\% & 37.5\% & 0.0\% \\
 \bottomrule

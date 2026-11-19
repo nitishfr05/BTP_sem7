@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{Defence Ablation Study on Live Testbed Telemetry (GPT-OSS-20B).}
+\label{tab:ablation_results}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Defence Configuration} & \textbf{ISR (\%)} & \textbf{Hits} & \textbf{$\Delta$ ISR} & \textbf{Latency (ms)} \\
+\midrule
+None (Baseline) & 65.0\% & 26/40 & 0.0\% & 4452.8 \\
+Spotlighting Delimiters alone & 62.5\% & 25/40 & -2.5\% & 5162.5 \\
+Heuristic Pre-Filter alone & 47.5\% & 19/40 & -17.5\% & 3977.7 \\
+Boundary-Awareness alone & 17.5\% & 7/40 & -47.5\% & 6276.5 \\
+Combined Stack (All Three) & 2.5\% & 1/40 & -62.5\% & 6480.9 \\
+\bottomrule
+\end{tabular}
+\end{table}
